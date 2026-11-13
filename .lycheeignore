@@ -1,0 +1,4 @@
+# The web app rejects automated clients.
+^https://app\.scenario\.com
+# These repository pages redirect to GitHub login when unauthenticated.
+^https://github\.com/scenario-labs/plugin-site/(issues/new|security/advisories/new)

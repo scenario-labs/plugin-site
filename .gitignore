@@ -1,0 +1,9 @@
+# Node tooling (pnpm install): commitlint
+node_modules/
+# Build output: handbooks built by hand or by the tests
+build/
+dist/
+# Agent run output (screenshots for pull requests)
+.agent_out/
+# macOS
+.DS_Store

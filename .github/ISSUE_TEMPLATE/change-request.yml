@@ -1,0 +1,56 @@
+name: Change request
+description: A missing capability, unclear guidance, or a workflow that costs more than it should
+type: Feature
+projects: ["scenario-labs/31"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is public and permanent. Leave out tokens, signed URLs, e-mail addresses and any unreleased project detail.
+
+        This tracker is for the site tooling the Scenario plug-ins share: the handbook builder and the site action. A change to one plug-in's docs belongs in that plug-in's repository. Check the open issues first.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to get done, and what stops you today? Describe the goal, not the solution.
+    validations:
+      required: true
+  - type: dropdown
+    id: part
+    attributes:
+      label: Part
+      options:
+        - Handbook builder (plugin-site handbook)
+        - Site action (action.yml)
+        - Configuration (handbook.config.json)
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: What you do now
+      description: The current workaround and what it costs, in steps or minutes.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like instead
+      description: Optional. A shape you have in mind, and any alternative you already rejected and why.
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Which plug-ins need it and how often it comes up. Say if it blocks you outright.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched open and closed issues for a duplicate.
+          required: true
+        - label: This request contains no tokens, signed URLs or personal data.
+          required: true

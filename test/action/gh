@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# A stand-in for the GitHub CLI in CI's action job, so action.yml runs end to
+# end without a real plug-in release. STAND_IN_TAG is the "latest release"
+# (empty: none yet); a release download writes a package and its SHA256SUMS;
+# an attestation check passes (the real one is GitHub's, not under test here).
+set -euo pipefail
+case "$1 ${2:-}" in
+  "release list") printf '%s\n' "${STAND_IN_TAG:-}" ;;
+  "release download")
+    dir="" file=""
+    shift 2
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --dir) dir="$2"; shift 2 ;;
+        --pattern) [ "$2" != SHA256SUMS ] && file="$2"; shift 2 ;;
+        *) shift ;;
+      esac
+    done
+    printf 'stand-in package\n' > "$dir/$file"
+    (cd "$dir" && sha256sum "$file" > SHA256SUMS)
+    ;;
+  "attestation verify") echo "stand-in: attestation verified" ;;
+  *) echo "stand-in gh: unexpected call: $*" >&2; exit 1 ;;
+esac

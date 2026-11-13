@@ -1,0 +1,17 @@
+# Code owners: requested reviewers for release files, repository automation,
+# licence and security texts. Paths are root-anchored; the last match wins.
+# A team can be added once it has write access to this repository.
+
+# Release version and changelog files
+/CHANGELOG.md                       @hervenivon
+/package.json                       @hervenivon
+
+# The action every plug-in runs, release machinery and repository automation
+/action.yml                         @hervenivon
+/.github/workflows/                 @hervenivon
+/.github/dependabot.yml             @hervenivon
+/.github/CODEOWNERS                 @hervenivon
+
+# Licence and security texts
+/LICENSE                            @hervenivon
+/SECURITY.md                        @hervenivon

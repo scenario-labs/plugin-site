@@ -1,0 +1,65 @@
+name: Bug report
+description: The handbook builder or the site action builds a wrong page, or fails
+type: Bug
+projects: ["scenario-labs/31"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is public and permanent. Leave out tokens, signed URLs, e-mail addresses and local paths with your username.
+
+        A problem with a plug-in itself (not its site) belongs in that plug-in's repository.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened
+      description: One or two sentences. The symptom, not the suspected cause.
+    validations:
+      required: true
+  - type: dropdown
+    id: part
+    attributes:
+      label: Part
+      options:
+        - Handbook builder (plugin-site handbook)
+        - Site action (action.yml)
+        - Configuration (handbook.config.json)
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: plugin
+    attributes:
+      label: Plug-in repository
+      description: The plug-in whose site this is, and the commit or release you built.
+      placeholder: scenario-labs/maya-plugin at maya-plugin-v0.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The command or the workflow run, and the plugin-site version (tag or commit) it used.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: The verbatim output of the builder or the run log lines. Paste text, not a screenshot, so it is searchable.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched open and closed issues for a duplicate.
+          required: true
+        - label: This report contains no tokens, signed URLs or personal data.
+          required: true

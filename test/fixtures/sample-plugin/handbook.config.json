@@ -1,0 +1,143 @@
+{
+  "product": "Scenario for Sample",
+  "brand": "for Sample",
+  "repository": "scenario-labs/sample-plugin",
+  "files": "scenario-sample",
+  "description": "User handbook for Scenario for Sample {version}.",
+  "version": {
+    "file": "version.json",
+    "json": "version"
+  },
+  "cta": [
+    [
+      "Download",
+      "/download/latest"
+    ],
+    [
+      "Install",
+      "#install"
+    ]
+  ],
+  "cover": [
+    [
+      "Sample",
+      "1.0, tested on macOS"
+    ]
+  ],
+  "downloads": [
+    "The plug-in: `scenario-sample-{version}.zip`, installed as described in [Install](#install)."
+  ],
+  "trademarks": "Sample is a trademark of its owner.",
+  "checks": {
+    "prefixed": [
+      [
+        "MCP",
+        "Scenario"
+      ]
+    ]
+  },
+  "fileNames": {
+    "docs/PRIVACY.md": "Privacy"
+  },
+  "gallery": {
+    "chapter": "use-it",
+    "eyebrow": "Before and after"
+  },
+  "flow": {
+    "from": {
+      "label": "From Sample",
+      "items": [
+        [
+          "A prompt",
+          "#use-it"
+        ]
+      ]
+    },
+    "models": {
+      "label": "Scenario models",
+      "items": [
+        [
+          "Generate",
+          "#use-it"
+        ]
+      ],
+      "note": "Price on the button."
+    },
+    "to": {
+      "label": "Back in Sample",
+      "items": [
+        [
+          "A layer"
+        ]
+      ]
+    }
+  },
+  "chapters": [
+    {
+      "id": "install",
+      "title": "Install",
+      "parts": [
+        {
+          "file": "README.md",
+          "section": "Install"
+        }
+      ]
+    },
+    {
+      "id": "downloads",
+      "title": "Downloads",
+      "generated": "downloads"
+    },
+    {
+      "id": "use-it",
+      "title": "Use it",
+      "parts": [
+        {
+          "file": "README.md",
+          "section": "Use it"
+        }
+      ]
+    },
+    {
+      "id": "how-it-works",
+      "title": "How it works",
+      "parts": [
+        {
+          "file": "README.md",
+          "section": "How it works"
+        }
+      ]
+    },
+    {
+      "id": "privacy",
+      "title": "What leaves your machine",
+      "parts": [
+        {
+          "file": "docs/PRIVACY.md"
+        }
+      ]
+    },
+    {
+      "id": "changelog",
+      "title": "Changelog",
+      "parts": [
+        {
+          "file": "CHANGELOG.md"
+        }
+      ]
+    },
+    {
+      "id": "licence",
+      "title": "Licence",
+      "parts": [
+        {
+          "file": "README.md",
+          "section": "License"
+        }
+      ],
+      "generated": "licence"
+    }
+  ],
+  "site": "https://sample.scenario.com",
+  "analytics": "/page.js"
+}

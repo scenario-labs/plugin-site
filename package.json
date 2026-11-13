@@ -1,0 +1,32 @@
+{
+  "name": "@scenario-labs/plugin-site",
+  "version": "0.0.0",
+  "description": "Shared site tooling for the Scenario plug-ins: the handbook builder and the action that publishes a plug-in's site.",
+  "license": "MIT",
+  "private": true,
+  "repository": "github:scenario-labs/plugin-site",
+  "bin": {
+    "plugin-site": "bin/plugin-site.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "action.yml",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-reporter=spec test/*.test.js",
+    "browsers": "playwright install chromium",
+    "lint": "node tools/lint.js"
+  },
+  "packageManager": "pnpm@12.10.1+sha512.ba40a37eb1a370d60fea8c4cf1d364c13bcccef518e98ad2bcee954f539d38da37458e58261a3fa55e06523450ea0ffff9f497b135be41f2c15c1642bacace6c",
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "playwright": "1.64.1"
+  }
+}
