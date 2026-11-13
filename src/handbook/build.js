@@ -679,6 +679,9 @@ function printPdf(chrome, htmlFile, pdfFile, profile) {
       "--virtual-time-budget=20000",
       "--run-all-compositor-stages-before-draw",
       `--print-to-pdf=${pdfFile}`,
+      // Extra flags for the machine, such as --no-sandbox on a CI runner that
+      // blocks Chrome's sandbox (CHROME_FLAGS, space-separated).
+      ...(process.env.CHROME_FLAGS || "").split(/\s+/).filter(Boolean),
       `file://${htmlFile}`
     ],
     { encoding: "utf8", timeout: 180000 }

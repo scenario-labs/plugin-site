@@ -65,7 +65,10 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm exec playwright install --with-deps chromium
           sudo apt-get install -y --no-install-recommends poppler-utils
+      # Ubuntu 24.04 runners block the user namespaces Chrome's sandbox needs.
       - name: The handbook in a browser, and its PDF
+        env:
+          CHROME_FLAGS: --no-sandbox
         run: node --test --test-reporter=spec test/browser.test.js
 
   # action.yml end to end on the sample plug-in, with a stand-in gh

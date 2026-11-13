@@ -78,7 +78,7 @@ npx github:scenario-labs/plugin-site#v0.1.0 handbook --no-pdf --out build/handbo
 
 `--config <path>` points at another configuration, `--quiet` prints only
 problems, and without `--no-pdf` the builder also prints the PDF through
-Google Chrome (`CHROME_PATH`, or the default install location).
+Google Chrome (`CHROME_PATH`, or the default install location; `CHROME_FLAGS` adds flags such as `--no-sandbox`).
 `HANDBOOK_GITHUB_REF` sets the ref the handbook's repository links open
 (default `main`); the action also sets `HANDBOOK_TREE` and `HANDBOOK_COMMIT`
 to the release's commit.
