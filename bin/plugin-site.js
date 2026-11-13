@@ -6,7 +6,8 @@
 //   plugin-site paths [--config handbook.config.json]
 //
 // Run from the plug-in repository (or pass --config with its path). `paths`
-// prints, one per line, the repository paths the handbook is built from.
+// prints, one per line, the paths the handbook is built from, relative to
+// where it runs.
 
 const path = require("node:path");
 
@@ -15,8 +16,10 @@ function paths(argv) {
   const configPath = at >= 0 ? argv[at + 1] : "handbook.config.json";
   const { loadConfig, docPaths } = require("../src/handbook/config.js");
   const { root, config } = loadConfig(configPath);
-  const relative = path.relative(root, path.resolve(configPath));
-  process.stdout.write(docPaths(config, relative).join("\n") + "\n");
+  // Relative to where it runs (the repository root in the action), so git can restore them.
+  const here = (p) => path.relative(process.cwd(), path.join(root, p)).split(path.sep).join("/");
+  const configFile = path.relative(root, path.resolve(configPath));
+  process.stdout.write(docPaths(config, configFile).map(here).join("\n") + "\n");
   return 0;
 }
 

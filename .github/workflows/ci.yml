@@ -46,6 +46,83 @@ jobs:
       - name: The handbook builder against the sample plug-in
         run: node --test --test-reporter=spec test/config.test.js test/handbook.test.js test/markdown.test.js
 
+  # The built page in Playwright's Chromium (search, theme, contents, lightbox)
+  # and the PDF with Poppler's pdftotext.
+  browser:
+    name: browser
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - name: Install Playwright from the lockfile, its Chromium and Poppler
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+          sudo apt-get install -y --no-install-recommends poppler-utils
+      - name: The handbook in a browser, and its PDF
+        run: node --test --test-reporter=spec test/browser.test.js
+
+  # action.yml end to end on the sample plug-in, with a stand-in gh
+  # (test/action/gh): before the first release, then from a release whose tag
+  # is on this checkout, with the package added under download/.
+  action:
+    name: action
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - name: Use the stand-in gh, and serve this checkout's tags to itself
+        run: |
+          echo "$GITHUB_WORKSPACE/test/action" >> "$GITHUB_PATH"
+          git remote set-url origin "$GITHUB_WORKSPACE"
+          git tag sample-plugin-v1.2.3
+      - id: before
+        uses: ./
+        with:
+          config: test/fixtures/sample-plugin/handbook.config.json
+          download: scenario-sample-{version}.zip
+      - name: Before the first release, main's docs and no download
+        env:
+          SITE: ${{ steps.before.outputs.path }}
+          TAG: ${{ steps.before.outputs.tag }}
+        run: |
+          test -f "$SITE/index.html" && test -f "$SITE/scenario-sample-handbook-1.2.3.html"
+          test -z "$TAG" && test ! -e "$SITE/download"
+          grep -q '/blob/main/' "$SITE/index.html"
+      - id: release
+        uses: ./
+        env:
+          STAND_IN_TAG: sample-plugin-v1.2.3
+        with:
+          config: test/fixtures/sample-plugin/handbook.config.json
+          handbook-path: handbook
+          static: test/fixtures/sample-plugin/docs/media
+          download: scenario-sample-{version}.zip
+      - name: From a release, its docs, the static folder and the checked package
+        env:
+          SITE: ${{ steps.release.outputs.path }}
+          TAG: ${{ steps.release.outputs.tag }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          test "$TAG" = sample-plugin-v1.2.3 && test "$VERSION" = 1.2.3
+          test -f "$SITE/handbook/index.html" && test -f "$SITE/hero.png"
+          grep -q '/blob/sample-plugin-v1.2.3/' "$SITE/handbook/index.html"
+          test -f "$SITE/download/scenario-sample-1.2.3.zip"
+          (cd "$SITE/download" && sha256sum -c SHA256SUMS)
+          test "$(jq -r .version "$SITE/download/latest.json")" = 1.2.3
+
   agents:
     name: agents
     runs-on: ubuntu-24.04
@@ -71,7 +148,7 @@ jobs:
   ci-ok:
     name: ci-ok
     if: always()
-    needs: [lint, test, agents]
+    needs: [lint, test, browser, action, agents]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

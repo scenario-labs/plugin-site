@@ -46,4 +46,8 @@ test("paths lists what the action restores from a release", () => {
   const cli = spawnSync(process.execPath, [path.join(__dirname, "..", "bin", "plugin-site.js"), "paths"], { cwd: SAMPLE, encoding: "utf8" });
   assert.equal(cli.status, 0, cli.stderr);
   assert.equal(cli.stdout, "handbook.config.json\nversion.json\nREADME.md\ndocs/PRIVACY.md\nCHANGELOG.md\ndocs/media\n");
+  // From the repository root, as the action runs it, the same paths under the config's folder.
+  const fromRoot = spawnSync(process.execPath, ["bin/plugin-site.js", "paths", "--config", "test/fixtures/sample-plugin/handbook.config.json"], { cwd: path.join(__dirname, ".."), encoding: "utf8" });
+  assert.equal(fromRoot.stdout.split("\n")[0], "test/fixtures/sample-plugin/handbook.config.json");
+  assert.equal(fromRoot.stdout.split("\n")[5], "test/fixtures/sample-plugin/docs/media");
 });

@@ -35,13 +35,16 @@ The builder was ported from photoshop-plugin's `tools/handbook`.
   handbook build, release package with its checksum and attestation.
 - `tools/lint.js`: repository checks (below).
 - `test/`: `node:test` suites against `test/fixtures/sample-plugin/`, a small
-  plug-in whose docs cover what the real ones use.
+  plug-in whose docs cover what the real ones use; `browser.test.js` drives
+  the built page and prints the PDF in Playwright's Chromium; `test/action/gh`
+  stands in for the GitHub CLI when CI runs `action.yml`.
 
 ## Commands
 
 ```sh
-pnpm install --frozen-lockfile              # commitlint only (Node from .nvmrc)
-node --test test/*.test.js                  # the tests (pnpm test)
+pnpm install --frozen-lockfile              # commitlint and Playwright (Node from .nvmrc)
+pnpm browsers                               # Playwright's Chromium, for test/browser.test.js
+node --test test/*.test.js                  # the tests (pnpm test); the browser and PDF ones skip without Playwright or pdftotext
 node tools/lint.js                          # em dashes, machine paths, addresses, JSON, JS, action pins (pnpm lint)
 node bin/plugin-site.js handbook --config <plug-in>/handbook.config.json --no-pdf --out build/handbook
 ```
@@ -53,7 +56,7 @@ numbers, Poppler's `pdftotext`; the tests build without it.
 
 | Workflow | When | What |
 | --- | --- | --- |
-| `ci.yml` | pull requests, `main` | `lint`, `test` (Linux, macOS, Windows), `agents` (shared skills valid and linked); `ci-ok` requires all three |
+| `ci.yml` | pull requests, `main` | `lint`, `test` (Linux, macOS, Windows), `browser` (the page in Chromium, the PDF), `action` (`action.yml` before and after a release, stand-in `gh`), `agents` (shared skills valid and linked); `ci-ok` requires them all |
 | `pr-name.yml`, `commitlint.yml` | pull requests | `pr-title` and `commits` against `commitlint.config.mjs` |
 | `links.yml` | pull requests changing Markdown, weekly | links in the docs |
 | `scorecard.yml` | weekly, `main` | OpenSSF Scorecard |
@@ -70,6 +73,7 @@ numbers, Poppler's `pdftotext`; the tests build without it.
   writes: no em dash, no machine path, no address but support@scenario.com,
   every link and picture resolved. Keep those checks failing loudly.
 - No runtime dependency: Node's built-in modules only, so `npx` needs no install.
+  Development dependencies (commitlint, Playwright) are pinned in `pnpm-lock.yaml`.
 - `.agents/skills/` holds skills shared by every Scenario repository
   (`skills-lock.json`); change them upstream. `.claude/skills/` links to them.
 - No em dashes, in code, docs, commit messages and PR titles.
