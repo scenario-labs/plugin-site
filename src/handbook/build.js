@@ -573,6 +573,7 @@ ${notes}
 <meta name="description" content="${esc(CONFIG.description.replace(/\{version\}/g, meta.version))}">
 ${heroImg && mode === "web" ? `<meta property="og:title" content="${product}"><meta property="og:image" content="${esc(heroImg.src)}">` : ""}
 <meta name="color-scheme" content="light dark">
+${CONFIG.analytics && mode === "web" ? `<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script><script defer src="${esc(CONFIG.analytics)}"></script>` : ""}
 ${fonts}
 <style>${CSS}${themeCss()}</style>
 </head>

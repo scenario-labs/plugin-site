@@ -138,5 +138,6 @@
       "generated": "licence"
     }
   ],
-  "site": "https://sample.scenario.com"
+  "site": "https://sample.scenario.com",
+  "analytics": "/page.js"
 }

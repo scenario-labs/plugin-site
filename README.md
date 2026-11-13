@@ -127,6 +127,7 @@ Optional, with their defaults:
 | `trademarks` | `""` | The trademark line in the footer |
 | `theme` | none | `{"accent", "accentDark"}`: the plug-in's colour |
 | `site` | `""` | The site's address, such as `https://maya.scenario.com`: needed for site-absolute links (`/download/latest`) in `cta` and `nav`, which the single file and the PDF open there |
+| `analytics` | `""` | A site-absolute script the web page loads, such as `/page.js`, where the plug-in's Vercel proxy serves Web Analytics; not in the single file or the PDF |
 | `buildCommand` | the `npx` line above | The command the handbook says it was built with |
 
 Docs may use the Markdown subset the plug-ins write (headings, lists, tables,

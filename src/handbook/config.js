@@ -21,7 +21,8 @@ const DEFAULTS = {
   flow: null,
   gallery: null,
   theme: null,
-  site: ""
+  site: "",
+  analytics: ""
 };
 
 const REQUIRED = ["product", "brand", "repository", "files", "description", "version", "chapters"];
@@ -52,6 +53,7 @@ function loadConfig(configPath = "handbook.config.json", cwd = process.cwd()) {
     if (!c.parts && !c.generated) fail(file, `chapter "${c.id}" needs "parts" or "generated"`);
     if (c.generated && !["downloads", "licence"].includes(c.generated)) fail(file, `chapter "${c.id}": unknown generated part "${c.generated}"`);
   }
+  if (raw.analytics && !/^\/[\w./-]+\.js$/.test(raw.analytics)) fail(file, '"analytics" must be a site-absolute script path such as /page.js');
   if (raw.site && !/^https:\/\/[\w.-]+$/.test(raw.site)) fail(file, '"site" must be an https:// address with no path');
   if (raw.gallery && !ids.has(raw.gallery.chapter)) fail(file, `"gallery.chapter" names no chapter: ${raw.gallery.chapter}`);
   if (raw.gallery && raw.gallery.show && !ids.has(raw.gallery.show)) fail(file, `"gallery.show" names no chapter: ${raw.gallery.show}`);
