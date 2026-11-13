@@ -72,6 +72,9 @@ numbers, Poppler's `pdftotext`; the tests build without it.
 - The builder keeps the plug-ins' public-content rules on every page it
   writes: no em dash, no machine path, no address but support@scenario.com,
   every link and picture resolved. Keep those checks failing loudly.
+- The handbook is for the people who use a plug-in. Nothing the builder adds
+  to it speaks to contributors (build commands, code diagrams, tests); those
+  stay in the plug-in's repository.
 - No runtime dependency: Node's built-in modules only, so `npx` needs no install.
   Development dependencies (commitlint, Playwright) are pinned in `pnpm-lock.yaml`.
 - `.agents/skills/` holds skills shared by every Scenario repository

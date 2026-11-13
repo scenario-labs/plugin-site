@@ -331,9 +331,6 @@ class Renderer {
       } else if (b.type === "heading") {
         const h = `h${Math.min(b.level, 6)}`;
         out.push(`<${h} id="${b.id}">${this.inline(b.text, b.file)}<a class="anchor" href="#${b.id}" aria-label="Link to this section">#</a></${h}>`);
-      } else if (b.type === "code" && b.lang === "mermaid" && this.ctx.mode === "web") {
-        this.ctx.mermaid = true;
-        out.push(`<div class="diagram"><pre class="mermaid">${esc(b.text)}</pre></div>`);
       } else if (b.type === "code") {
         out.push(`<pre><code${b.lang ? ` class="lang-${esc(b.lang)}"` : ""}>${esc(b.text)}</code></pre>`);
       } else if (b.type === "quote") {
@@ -477,7 +474,7 @@ ${lines.join("\n")}
 
 function licenceExtra(meta) {
   return `<p>The Scenario logo is a trademark of Scenario and is not covered by the MIT license.</p>
-<p class="build-note">This handbook is generated from the Markdown docs in the repository (<code>${esc(CONFIG.buildCommand)}</code>), version ${meta.version}${meta.commit ? `, commit <code>${meta.commit}</code>` : ""}, ${meta.date}.</p>`;
+<p class="build-note">This handbook is generated from the plug-in's docs, version ${meta.version}${meta.commit ? `, commit <code>${meta.commit}</code>` : ""}, ${meta.date}.</p>`;
 }
 
 // ---------------------------------------------------------------- page
@@ -613,7 +610,7 @@ ${body}
 </div>
 <dialog class="lightbox" id="lightbox" aria-label="Enlarged picture"><form method="dialog"><button class="lb-close" aria-label="Close">Close</button></form><img alt=""><p class="lb-cap"></p></dialog>
 <script type="application/json" id="search-index">${searchJson}</script>
-<script>${SCRIPT}</script>${ctx.mermaid ? MERMAID : ""}
+<script>${SCRIPT}</script>
 </body>
 </html>
 `;
@@ -715,17 +712,13 @@ function chapterPages(pdfFile, chapters) {
 
 // ---------------------------------------------------------------- main
 
-// Mermaid diagrams (```mermaid blocks) drawn in the web page only; the single
-// file and the PDF show their source. Pinned, loaded from jsDelivr.
-const MERMAID = `<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";const dark=document.documentElement.getAttribute("data-theme")==="dark"||(!document.documentElement.getAttribute("data-theme")&&matchMedia("(prefers-color-scheme: dark)").matches);mermaid.initialize({startOnLoad:true,theme:dark?"dark":"neutral",securityLevel:"strict"});</script>`;
-
 // The plug-in's accent colour (handbook.config.json "theme.accent"), light and dark.
 function themeCss() {
   // The PDF's page footer names the product.
   const print = `@media print{@page{@bottom-left{content:${JSON.stringify(`${CONFIG.product} handbook`)};font:8pt "IBM Plex Mono",monospace;color:#777}}}`;
   const t = CONFIG.theme;
-  if (!t || !t.accent) return `${print}.diagram{margin:1.2rem 0;overflow-x:auto}`;
-  return `${print}:root{--accent:${t.accent}}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--accent:${t.accentDark || t.accent}}}:root[data-theme="dark"]{--accent:${t.accentDark || t.accent}}.diagram{margin:1.2rem 0;overflow-x:auto}`;
+  if (!t || !t.accent) return print;
+  return `${print}:root{--accent:${t.accent}}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--accent:${t.accentDark || t.accent}}}:root[data-theme="dark"]{--accent:${t.accentDark || t.accent}}`;
 }
 
 // Reads the plug-in's version where its release tooling keeps it.

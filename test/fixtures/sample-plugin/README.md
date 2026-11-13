@@ -31,14 +31,15 @@ Pick a model, write a prompt and press **Generate**.
 
 *Verified live* on Sample 1.0. The Scenario MCP drives the same actions.
 
-## How it works
+## Troubleshooting
 
-```mermaid
-flowchart LR
-  A[Prompt] --> B[Scenario]
-```
+### Sign-in
 
-See [Install](#install) to start.
+Sign in again from the panel. See [Install](#install) to start.
+
+### Prices
+
+A price that does not show is retried by clicking it.
 
 ## License
 

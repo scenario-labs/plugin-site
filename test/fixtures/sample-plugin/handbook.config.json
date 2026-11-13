@@ -99,12 +99,12 @@
       ]
     },
     {
-      "id": "how-it-works",
-      "title": "How it works",
+      "id": "troubleshooting",
+      "title": "Troubleshooting",
       "parts": [
         {
           "file": "README.md",
-          "section": "How it works"
+          "section": "Troubleshooting"
         }
       ]
     },

@@ -47,7 +47,7 @@ test("the handbook page works in a browser", { skip }, async (t) => {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  // The page's own requests only: fonts, Mermaid and analytics are left out.
+  // The page's own requests only: fonts and analytics are left out.
   await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, (route) => route.abort());
   await page.route("**/page.js", (route) => route.fulfill({ status: 200, contentType: "text/javascript", body: "" }));
   await page.goto(url);
