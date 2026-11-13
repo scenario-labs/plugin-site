@@ -163,6 +163,7 @@ tbody th{font-weight:500;color:var(--ink)}
 table.kv thead{display:none}
 table.kv tbody tr:first-child th,table.kv tbody tr:first-child td{border-top:0}
 td code,th code{font-size:.82em}
+td img,th img{max-width:100%;height:auto}
 
 /* Pictures */
 .zoom{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in;border-radius:8px;overflow:hidden;line-height:0}
