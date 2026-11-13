@@ -38,14 +38,14 @@ test("the handbook builds from the plug-in's docs with every link and picture re
   assert.match(html, /<p class="fig-note">One key light\. <a href="#privacy">Privacy<\/a><\/p>/, "a <sub> line is the picture's caption");
   assert.match(html, /class="gallery screen-only"/, "the before and after gallery");
   assert.match(html, /class="flow"/, "the flow diagram");
-  assert.match(html, /<pre class="mermaid">/, "Mermaid drawn in the web page");
+  assert.match(html, /<li><a href="#troubleshooting">Troubleshooting<\/a><ol><li><a href="#sign-in">Sign-in<\/a><\/li><li><a href="#prices">Prices<\/a><\/li><\/ol>/, "a chapter's h3s are its sub-entries in the contents");
+  assert.ok(!html.includes("plugin-site handbook"), "no build command for readers");
   assert.match(html, /class="claim claim-live">Verified live/);
   assert.match(html, /<a href="#install">Install<\/a> to start/, "a chapter id is a link target");
   assert.ok(!EM_DASH.test(html));
   const single = fs.readFileSync(path.join(out, `scenario-sample-handbook-${r.version}.html`), "utf8");
   assert.ok(!/<img src="(?!data:)/.test(single), "the single file embeds its pictures");
   assert.ok(!/href="(?!#|https:|mailto:)/.test(single), "and links nothing relative");
-  assert.ok(!single.includes('class="mermaid"'), "and shows Mermaid as code");
   assert.match(html, /<a class="button" href="\/download\/latest">Download<\/a>/, "a site-absolute link stays in the web page");
   assert.match(single, /href="https:\/\/sample\.scenario\.com\/download\/latest"/, "and opens on the site from the single file");
   assert.match(html, /<script defer src="\/page\.js"><\/script>/, "the web page loads the site's analytics");

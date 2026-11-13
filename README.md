@@ -97,12 +97,20 @@ to the release's commit.
 | `version` | Where the version is read: `{"file": "plugin/manifest.json", "json": "version"}` (a dotted path) or `{"file": "...", "pattern": "regex with one group"}` |
 | `chapters` | The handbook's chapters, in order (below) |
 
+The handbook is for the people who use the plug-in, so its chapters follow
+theirs, as in the Photoshop and Blender handbooks: what it does, install,
+quick start, find your way around, one chapter per feature, costs, jobs,
+files and folders, what leaves the machine, troubleshooting, known limits,
+changelog, licence. Architecture, tests, diagrams of the code and the design
+spec stay in the repository for contributors. A chapter's `###` headings are
+its entries in the contents column, shown while it is read.
+
 A chapter is `{"id", "title", "parts"}`, with `"newPage": true` to start it on
 a new page in the PDF. Each part takes from one doc:
 
 - `{"file": "README.md", "section": "Install"}`: one h2 section, its content only;
 - `{"file": "docs/PRIVACY.md"}`: the whole doc, its h1 dropped, its h2s as subsections, `"skip": [...]` leaving some out;
-- `{"file": "...", "only": "Tests"}`: one section kept with its heading.
+- `{"file": "...", "only": "Troubleshooting"}`: one section kept with its heading.
 
 `"generated": "downloads"` makes a chapter of the download links, and
 `"generated": "licence"` adds the licence notes after its parts. `"alias"`
@@ -128,12 +136,11 @@ Optional, with their defaults:
 | `theme` | none | `{"accent", "accentDark"}`: the plug-in's colour |
 | `site` | `""` | The site's address, such as `https://maya.scenario.com`: needed for site-absolute links (`/download/latest`) in `cta` and `nav`, which the single file and the PDF open there |
 | `analytics` | `""` | A site-absolute script the web page loads, such as `/page.js`, where the plug-in's Vercel proxy serves Web Analytics; not in the single file or the PDF |
-| `buildCommand` | the `npx` line above | The command the handbook says it was built with |
 
 Docs may use the Markdown subset the plug-ins write (headings, lists, tables,
 code, block quotes, emphasis, links, pictures) and the layout HTML READMEs
 add: `<p align>` and `<div>` wrappers, `<a href>`, `<img width>` and `<sub>`
-captions. A `mermaid` code block is drawn in the web page.
+captions. Code blocks show as code.
 [test/fixtures/sample-plugin](test/fixtures/sample-plugin) is a complete
 example.
 

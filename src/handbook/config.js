@@ -16,7 +16,6 @@ const DEFAULTS = {
   fileNames: { "README.md": "README", "CHANGELOG.md": "Changelog", LICENSE: "LICENSE" },
   figures: { beforeAfter: "before-after/", screens: "screens/" },
   checks: { prefixed: [] },
-  buildCommand: "npx github:scenario-labs/plugin-site handbook",
   trademarks: "",
   flow: null,
   gallery: null,
