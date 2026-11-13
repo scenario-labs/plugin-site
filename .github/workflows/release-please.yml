@@ -1,0 +1,40 @@
+# Release automation, as in the plug-in repositories. On each push to main,
+# release-please keeps the release PR up to date: the next version in
+# package.json and the changelog from the Conventional Commit titles. Merging
+# that PR authorizes the release: release-please creates the release and its
+# tag vX.Y.Z, which the plug-ins pin (by tag or, as their workflows do, by the
+# tag's commit SHA). There is nothing to build: the action runs from the tag.
+name: release-please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    # Forks have neither the App credentials nor anything to release.
+    if: github.repository == 'scenario-labs/plugin-site'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions: {}
+    steps:
+      # The release PR and the release are created with a GitHub App token, not
+      # GITHUB_TOKEN: GitHub never starts a workflow from an event created by
+      # GITHUB_TOKEN, and the release PR must run the same CI as any other PR.
+      - name: Retrieve GitHub App token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        id: app-token
+        with:
+          client-id: ${{ secrets.GH_ACTIONS_TOKEN_RETRIEVER_PUBLIC_REPO_CLIENT_ID }}
+          private-key: ${{ secrets.GH_ACTIONS_TOKEN_RETRIEVER_PUBLIC_REPO_PRIVATE_KEY }}
+
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ steps.app-token.outputs.token }}

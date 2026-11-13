@@ -1,0 +1,119 @@
+name: Scenario plug-in site
+description: >-
+  Builds a Scenario plug-in's site from its newest published release: the
+  handbook from the plug-in's Markdown docs (handbook.config.json), an
+  optional hand-made page at the root, and the release package under
+  download/ once its checksum and build provenance verify. Run it from the
+  plug-in's Pages workflow, after actions/checkout with fetch-depth 0, then
+  upload the output with actions/upload-pages-artifact.
+
+inputs:
+  config:
+    description: The plug-in's handbook configuration, relative to the repository root.
+    default: handbook.config.json
+  handbook-path:
+    description: Where the handbook goes in the site ("" for the root, or a folder such as "handbook").
+    default: ""
+  static:
+    description: A folder of the plug-in repository copied to the site root first, such as a hand-made page.
+    default: ""
+  download:
+    description: >-
+      The release asset to serve under download/, with {version} for the
+      release's version, such as "scenario-maya-{version}.zip". Empty for none.
+    default: ""
+  token:
+    description: Token that reads the plug-in's releases and attestations.
+    default: ${{ github.token }}
+
+outputs:
+  path:
+    description: The assembled site, ready for actions/upload-pages-artifact.
+    value: ${{ steps.assemble.outputs.path }}
+  version:
+    description: The version the site describes.
+    value: ${{ steps.release.outputs.version }}
+  tag:
+    description: The release the site was built from, empty before the first release.
+    value: ${{ steps.release.outputs.tag }}
+
+runs:
+  using: composite
+  steps:
+    # The page and its pictures come from the newest published release, so the
+    # site never describes a feature people cannot download yet. Before the
+    # first release, main's docs, with no download.
+    - name: Take the docs from the newest published release
+      id: release
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        CONFIG: ${{ inputs.config }}
+        TOOL: ${{ github.action_path }}/bin/plugin-site.js
+      run: |
+        set -euo pipefail
+        # An empty answer means no release yet; an error from GitHub fails the
+        # step rather than publishing the site without its download.
+        tag="$(gh release list --repo "$GITHUB_REPOSITORY" --json tagName,isLatest --jq '[.[] | select(.isLatest)][0].tagName // ""')"
+        if [ -z "$tag" ]; then
+          echo "::notice::No release yet: main's docs, with no download"
+          { echo "tag="; echo "ref=main"; echo "tree="; } >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        version="$(sed -nE 's/.*v?([0-9]+\.[0-9]+\.[0-9]+)$/\1/p' <<<"$tag")"
+        [ -n "$version" ] || { echo "::error::Unexpected release tag $tag"; exit 1; }
+        git fetch --no-tags --depth=1 origin "refs/tags/$tag:refs/tags/$tag"
+        commit="$(git rev-parse "refs/tags/$tag^{commit}")"
+        if git cat-file -e "$commit:$CONFIG" 2>/dev/null; then
+          mapfile -t paths < <(node "$TOOL" paths --config "$CONFIG")
+          git restore --source="$commit" -- "${paths[@]}"
+          { echo "tag=$tag"; echo "version=$version"; echo "ref=$tag"; echo "tree=$commit"; } >> "$GITHUB_OUTPUT"
+        else
+          # A release from before the handbook: main's docs, linked at main.
+          echo "::warning::$tag has no $CONFIG: building main's docs"
+          { echo "tag=$tag"; echo "version=$version"; echo "ref=main"; echo "tree="; } >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Build the handbook and assemble the site
+      id: assemble
+      shell: bash
+      env:
+        CONFIG: ${{ inputs.config }}
+        HANDBOOK_PATH: ${{ inputs.handbook-path }}
+        STATIC: ${{ inputs.static }}
+        HANDBOOK_GITHUB_REF: ${{ steps.release.outputs.ref }}
+        HANDBOOK_TREE: ${{ steps.release.outputs.tree }}
+        TOOL: ${{ github.action_path }}/bin/plugin-site.js
+      run: |
+        set -euo pipefail
+        site="$RUNNER_TEMP/plugin-site"
+        rm -rf "$site" && mkdir -p "$site"
+        if [ -n "$STATIC" ]; then cp -R "$STATIC/." "$site/"; fi
+        [ -n "$HANDBOOK_TREE" ] && export HANDBOOK_COMMIT="${HANDBOOK_TREE:0:7}"
+        node "$TOOL" handbook --config "$CONFIG" --no-pdf --out "$site/${HANDBOOK_PATH}"
+        echo "path=$site" >> "$GITHUB_OUTPUT"
+
+    # The release package, served from the site's own domain at
+    # download/<file>, with download/latest.json naming its version. Checked
+    # against the release's SHA256SUMS and its build attestation first.
+    - name: Add the release package
+      if: inputs.download != '' && steps.release.outputs.tag != ''
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        TAG: ${{ steps.release.outputs.tag }}
+        VERSION: ${{ steps.release.outputs.version }}
+        DOWNLOAD: ${{ inputs.download }}
+        SITE: ${{ steps.assemble.outputs.path }}
+      run: |
+        set -euo pipefail
+        file="${DOWNLOAD//\{version\}/$VERSION}"
+        dir="$RUNNER_TEMP/plugin-site-release"
+        rm -rf "$dir" && mkdir -p "$dir" "$SITE/download"
+        gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir "$dir" --pattern SHA256SUMS --pattern "$file"
+        grep -E "^[0-9a-f]{64}  ${file//./\\.}\$" "$dir/SHA256SUMS" > "$SITE/download/SHA256SUMS"
+        (cd "$dir" && sha256sum -c "$SITE/download/SHA256SUMS")
+        # Built by the plug-in's own release workflow from the tagged commit.
+        gh attestation verify "$dir/$file" --repo "$GITHUB_REPOSITORY"
+        cp "$dir/$file" "$SITE/download/"
+        jq -n --arg version "$VERSION" --arg file "$file" '{version: $version, file: $file}' > "$SITE/download/latest.json"

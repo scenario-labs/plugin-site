@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: A problem with a plug-in itself
+    url: https://github.com/scenario-labs
+    about: Report it in that plug-in's repository (maya-plugin, photoshop-plugin and so on). This tracker is for the shared site tooling.
+  - name: Account, billing, credits or a security report
+    url: https://app.scenario.com
+    about: Anything tied to your account is private. Use in-app support or support@scenario.com, not a public issue.
