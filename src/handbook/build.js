@@ -295,23 +295,21 @@ class Renderer {
     // A caption on the line after the pictures (a README's <sub> line) counts as one.
     const trailing = rest.trim();
     if (trailing && /^\*[^*][\s\S]*\*$/.test(trailing) && !caption) caption = trailing.slice(1, -1);
-    else if (trailing || !imgs.length) return null;
+    else if (trailing || (!imgs.length && !caption)) return null;
     const figs = CONFIG.figures;
     const kind = (im) => (figs.beforeAfter && im.repoPath.includes(figs.beforeAfter) ? "ba" : /\.gif$/i.test(im.repoPath) ? "clip" : figs.screens && im.repoPath.includes(figs.screens) ? "screen" : "wide");
     const cap = caption ? `<p class="fig-note">${this.inline(caption, b.file)}</p>` : "";
-    if (imgs.every((im) => kind(im) === "screen")) {
-      const shots = imgs
-        .map((im) => `<figure class="shot">${zoomable(im)}<figcaption>${esc(im.alt)}</figcaption></figure>`)
-        .join("");
+    // An italic paragraph alone, under a table, reads as its caption.
+    if (!imgs.length) return cap;
+    const label = (k) => (k === "ba" ? "Before and after" : k === "clip" ? "Recording" : "");
+    const text = (im) => `${label(kind(im)) ? `<span class="fig-label">${label(kind(im))}</span> ` : ""}${esc(im.alt)}`;
+    // Screenshots, and several pictures side by side, as one row with one caption.
+    if (imgs.length > 1 || kind(imgs[0]) === "screen") {
+      const shots = imgs.map((im) => `<figure class="shot">${zoomable(im)}<figcaption>${text(im)}</figcaption></figure>`).join("");
       return `<div class="shots n${imgs.length}">${shots}${cap}</div>`;
     }
-    return imgs
-      .map((im) => {
-        const k = kind(im);
-        const label = k === "ba" ? "Before and after" : k === "clip" ? "Recording" : "";
-        return `<figure class="fig fig-${k}">${zoomable(im)}<figcaption>${label ? `<span class="fig-label">${label}</span> ` : ""}${esc(im.alt)}${cap ? "" : ""}</figcaption>${cap}</figure>`;
-      })
-      .join("");
+    const im = imgs[0];
+    return `<figure class="fig fig-${kind(im)}">${zoomable(im)}<figcaption>${text(im)}</figcaption>${cap}</figure>`;
   }
 
   blocks(list) {

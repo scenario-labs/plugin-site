@@ -25,6 +25,10 @@ Pick a model, write a prompt and press **Generate**.
 <p align="center"><img src="docs/media/turntable.png" width="120" alt="The result turning"></p>
 <p align="center"><sub>One key light. <a href="docs/PRIVACY.md">Privacy</a></sub></p>
 
+<p align="center"><img src="docs/media/turntable.png" width="120" alt="The result, front"> <img src="docs/media/hero.png" width="120" alt="The result, in the scene"></p>
+
+*Two views of one result.*
+
 **Remove** takes the object out.
 
 ![Before and after a removal](docs/media/before-after/remove.png)

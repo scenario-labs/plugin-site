@@ -36,6 +36,9 @@ test("the handbook builds from the plug-in's docs with every link and picture re
   assert.match(html, /<table>[\s\S]*?<img src="media\/screens\/panel\.png"[\s\S]*?<\/table>/, "screenshots in a table stay in it");
   assert.match(html, /style="max-width:120px"/, "a picture keeps the width its doc gives");
   assert.match(html, /<p class="fig-note">One key light\. <a href="#privacy">Privacy<\/a><\/p>/, "a <sub> line is the picture's caption");
+  assert.match(html, /<div class="shots n2">(?:<figure class="shot">[\s\S]*?<\/figure>){2}<p class="fig-note">Two views of one result\.<\/p><\/div>/, "pictures side by side share one row and one caption");
+  assert.equal(html.split('<p class="fig-note">Two views of one result.').length, 2, "the caption shows once");
+  assert.match(html, /td img,th img\{max-width:100%/, "a picture in a table fits its column");
   assert.match(html, /class="gallery screen-only"/, "the before and after gallery");
   assert.match(html, /class="flow"/, "the flow diagram");
   assert.match(html, /<li><a href="#troubleshooting">Troubleshooting<\/a><ol><li><a href="#sign-in">Sign-in<\/a><\/li><li><a href="#prices">Prices<\/a><\/li><\/ol>/, "a chapter's h3s are its sub-entries in the contents");
